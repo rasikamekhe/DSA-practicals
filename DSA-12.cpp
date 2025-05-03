@@ -1,14 +1,16 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-using namespace std;
+#include <iostream>      // For input-output operations
+#include <fstream>       // For file operations
+#include <string>        // For using the string class
+using namespace std;     // So we don't need to prefix std:: before standard classes
 
+// Structure to store employee data
 struct Employee {
-    int Employee_ID;
-    int salary;
-    string name;
-    string designation;
+    int Employee_ID;     // Unique identifier for each employee
+    int salary;          // Employee's salary
+    string name;         // Employee's name
+    string designation;  // Employee's job title
 
+    // Function to write employee data to a file
     void writedata(ofstream &out) {
         out << Employee_ID << endl;
         out << name << endl;
@@ -16,26 +18,28 @@ struct Employee {
         out << salary << endl;
     }
 
+    // Function to read employee data from a file
     void readdata(ifstream &in) {
         in >> Employee_ID;
-        in.ignore();
-        getline(in, name);
-        getline(in, designation);
-        in >> salary;
+        in.ignore();              // Ignore newline after ID
+        getline(in, name);        // Read full name (can include spaces)
+        getline(in, designation); // Read full designation
+        in >> salary;             // Read salary
     }
 };
 
+// Function to add a new employee to the file
 void add() {
-    ofstream out("employee.dat", ios::app);
-    if (!out) {
+    ofstream out("employee.dat", ios::app); // Open file in append mode
+    if (!out) {                             // Check if file opened successfully
         cout << "Error! Can't open the file." << endl;
         return;
     }
 
-    Employee e;
+    Employee e;                             // Create an employee object
     cout << "Enter the Employee ID: ";
     cin >> e.Employee_ID;
-    cin.ignore();
+    cin.ignore();                           // Ignore newline character
     cout << "Enter the Employee Name: ";
     getline(cin, e.name);
     cout << "Enter the Employee Designation: ";
@@ -43,23 +47,24 @@ void add() {
     cout << "Enter the Employee Salary: ";
     cin >> e.salary;
 
-    e.writedata(out);
-    out.close();
+    e.writedata(out);                       // Write data to file
+    out.close();                            // Close the file
     cout << "Employee data added successfully." << endl;
 }
 
+// Function to delete an employee record
 void deleteEmployee() {
     int del_ID;
     cout << "Enter the Employee ID whose data is to be deleted: ";
     cin >> del_ID;
 
-    ifstream in("employee.dat");
+    ifstream in("employee.dat");            // Open original file for reading
     if (!in) {
         cout << "Error! Can't open the file for reading." << endl;
         return;
     }
 
-    ofstream out("temp.dat");
+    ofstream out("temp.dat");               // Temporary file for writing remaining data
     if (!out) {
         cout << "Error! Can't create the temporary file." << endl;
         return;
@@ -69,36 +74,37 @@ void deleteEmployee() {
     bool found = false;
 
     while (in) {
-        e.readdata(in);
-        if (!in) break;
+        e.readdata(in);                     // Read each record
+        if (!in) break;                     // Stop at end of file
 
-        if (e.Employee_ID == del_ID) {
+        if (e.Employee_ID == del_ID) {      // If ID matches, skip writing it
             found = true;
             cout << "Employee with ID " << del_ID << " deleted." << endl;
-            continue;
+            continue;                       // Skip writing to temp file
         }
-        e.writedata(out);
+        e.writedata(out);                   // Write other records to temp file
     }
 
-    in.close();
+    in.close();                             // Close both files
     out.close();
 
     if (found) {
-        remove("employee.dat");
-        rename("temp.dat", "employee.dat");
+        remove("employee.dat");             // Delete original file
+        rename("temp.dat", "employee.dat"); // Rename temp file to original file
         cout << "Employee data has been successfully deleted." << endl;
     } else {
         cout << "No employee found with ID " << del_ID << endl;
-        remove("temp.dat");
+        remove("temp.dat");                 // Clean up temp file if not found
     }
 }
 
+// Function to display a specific employee's data
 void display() {
     int display_ID;
     cout << "Enter the Employee ID to display: ";
     cin >> display_ID;
 
-    ifstream in("employee.dat");
+    ifstream in("employee.dat");            // Open file for reading
     if (!in) {
         cout << "Error! Can't open the file for reading." << endl;
         return;
@@ -108,10 +114,10 @@ void display() {
     bool found = false;
 
     while (in) {
-        e.readdata(in);
+        e.readdata(in);                     // Read each employee
         if (!in) break;
 
-        if (e.Employee_ID == display_ID) {
+        if (e.Employee_ID == display_ID) {  // If ID matches, display info
             cout << "Employee Found:" << endl;
             cout << "Employee ID: " << e.Employee_ID << endl;
             cout << "Name: " << e.name << endl;
@@ -126,21 +132,22 @@ void display() {
         cout << "Employee with ID " << display_ID << " not found." << endl;
     }
 
-    in.close();
+    in.close();                             // Close file
 }
 
+// Function to update an existing employee's data
 void updateEmployee() {
     int update_ID;
     cout << "Enter the Employee ID whose data is to be updated: ";
     cin >> update_ID;
 
-    ifstream in("employee.dat");
+    ifstream in("employee.dat");            // Open file for reading
     if (!in) {
         cout << "Error! Can't open the file for reading." << endl;
         return;
     }
 
-    ofstream out("temp.dat");
+    ofstream out("temp.dat");               // Temporary file to store updated data
     if (!out) {
         cout << "Error! Can't create the temporary file." << endl;
         return;
@@ -150,12 +157,12 @@ void updateEmployee() {
     bool found = false;
 
     while (in) {
-        e.readdata(in);
+        e.readdata(in);                     // Read each employee
         if (!in) break;
 
         if (e.Employee_ID == update_ID) {
             found = true;
-            cin.ignore();
+            cin.ignore();                   // Flush newline
 
             cout << "Enter new Name: ";
             string newName;
@@ -179,22 +186,23 @@ void updateEmployee() {
             cout << "Employee data updated." << endl;
         }
 
-        e.writedata(out);
+        e.writedata(out);                   // Write updated or unchanged data
     }
 
     in.close();
     out.close();
 
     if (found) {
-        remove("employee.dat");
-        rename("temp.dat", "employee.dat");
+        remove("employee.dat");             // Delete original file
+        rename("temp.dat", "employee.dat"); // Replace with updated file
         cout << "Employee data has been successfully updated." << endl;
     } else {
         cout << "No employee found with ID " << update_ID << endl;
-        remove("temp.dat");
+        remove("temp.dat");                 // Remove temp if no update was made
     }
 }
 
+// Main menu-driven function
 int main() {
     int choice = 0;
 
@@ -208,6 +216,7 @@ int main() {
         cout << "Enter your choice: ";
         cin >> choice;
 
+        // Call the corresponding function based on user choice
         switch (choice) {
             case 1:
                 add();
@@ -228,7 +237,7 @@ int main() {
                 cout << "Invalid choice! Please enter a valid option." << endl;
         }
 
-    } while (choice != 5);
+    } while (choice != 5); // Loop until user chooses to exit
 
     return 0;
 }
