@@ -2,18 +2,19 @@
 #include <iomanip>
 using namespace std;
 
-class graph {
-    int G[20][20];
-    string city[20];
+class Graph {
+    int G[20][20];         // Adjacency matrix to store edge weights (costs between offices)
+    string office[20];     // Array to store office names
 
 public:
-    int n;
+    int n;                 // Number of offices
 
-    graph() {
-        cout << "Enter no. of vertices you want in flight path graph: " << endl;
+    // Constructor to initialize the graph
+    Graph() {
+        cout << "Enter the number of offices: ";
         cin >> n;
 
-        // Initialize adj matrix to 0
+        // Initialize the adjacency matrix with 0 (no connection)
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 G[i][j] = 0;
@@ -21,64 +22,69 @@ public:
         }
     }
 
+    // Function to create the graph (input office names and connection costs)
     void create();
     void display();
-    void prims();
+    void prims();  // Function to apply Prim’s algorithm and find MST
 };
 
-void graph::create() {
+// Function to input office names and their pairwise connection costs
+void Graph::create() {
     for (int i = 0; i < n; i++) {
-        cout << "Enter name of city " << (i + 1) << ": " << endl;
-        cin >> city[i];
+        cout << "Enter name of office " << (i + 1) << ": ";
+        cin >> office[i];
     }
 
+    // Only fill upper triangle of matrix to avoid duplicate inputs
     for (int i = 0; i < n; i++) {
         for (int j = i + 1; j < n; j++) {
-            cout << "Enter distance between " << city[i] << " and " << city[j] << ": ";
-            cout << "(Enter 0 if no direct flight)" << endl;
+            cout << "Enter cost to connect " << office[i] << " and " << office[j] << ": ";
+            cout << "(Enter 0 if no direct connection)" << endl;
             cin >> G[i][j];
-            G[j][i] = G[i][j];
+            G[j][i] = G[i][j];  // Symmetric for undirected graph
         }
     }
 }
 
-void graph::display() {
-    cout << "\nAdjacency matrix: " << endl;
+// Function to display the adjacency matrix
+void Graph::display() {
+    cout << "\nAdjacency Matrix (Cost to connect offices):\n";
     cout << "\t\t";
     for (int i = 0; i < n; i++) {
-        cout << setw(20) << city[i] << " ";
+        cout << setw(15) << office[i];
     }
     cout << endl;
 
     for (int i = 0; i < n; i++) {
-        cout << setw(20) << city[i] << " ";
+        cout << setw(15) << office[i];
         for (int j = 0; j < n; j++) {
-            cout << setw(20) << G[i][j] << " ";
+            cout << setw(15) << G[i][j];
         }
         cout << endl;
     }
 }
 
-void graph::prims() {
-    int visited[20] = {0}; // visited array
-    int no_edges = 0;
-    int min_cost = 0;
+// Function to find the Minimum Spanning Tree using Prim's Algorithm
+void Graph::prims() {
+    int visited[20] = {0};  // Track which offices are connected
+    int no_edges = 0;       // Number of edges in MST
+    int min_cost = 0;       // Total cost of MST
     int min, u, v;
 
-    cout << "Enter starting vertex (index between 0 and " << n - 1 << "): ";
     int R;
+    cout << "\nEnter the starting office index (0 to " << n - 1 << "): ";
     cin >> R;
 
-    visited[R] = 1; // Mark the starting vertex as visited
-    no_edges = 0;
+    visited[R] = 1;  // Mark the starting office as connected
 
-    cout << "\nEdges in the minimum spanning tree (MST):" << endl;
+    cout << "\nEdges selected for Minimum Spanning Tree:\n";
 
     while (no_edges < n - 1) {
-        min = 999; // Initialize min with 999
+        min = 999;  // Set large initial min
         u = -1;
         v = -1;
 
+        // Loop through connected offices to find the smallest connecting edge
         for (int i = 0; i < n; i++) {
             if (visited[i] == 1) {
                 for (int j = 0; j < n; j++) {
@@ -91,24 +97,29 @@ void graph::prims() {
             }
         }
 
+        // If valid edge found, add it to MST
         if (u != -1 && v != -1) {
-            cout << city[u] << " - " << city[v] << " : " << min << endl;
-            visited[v] = 1; // Mark the vertex as visited
+            cout << office[u] << " - " << office[v] << " : " << min << endl;
+            visited[v] = 1;
             no_edges++;
             min_cost += min;
         }
     }
 
-    cout << "Minimum cost of MST is: " << min_cost << endl;
+    cout << "\nTotal minimum cost to connect all offices: " << min_cost << endl;
 }
 
+// Main function
 int main() {
-    graph g;
+    Graph g;
     g.create();
     g.display();
     g.prims();
     return 0;
 }
+
+
+
 
 //OUTPUT:
 Enter no. of vertices you want in flight path graph:
