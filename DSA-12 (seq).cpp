@@ -1,14 +1,14 @@
-#include <iostream>      // For input-output operations
-#include <fstream>       // For file operations
-#include <string>        // For using the string class
-using namespace std;     // So we don't need to prefix std:: before standard classes
+#include <iostream>      
+#include <fstream>       
+#include <string>        
+using namespace std;     
 
 // Structure to store employee data
 struct Employee {
-    int Employee_ID;     // Unique identifier for each employee
-    int salary;          // Employee's salary
-    string name;         // Employee's name
-    string designation;  // Employee's job title
+    int Employee_ID;     
+    int salary;          
+    string name;         
+    string designation;  
 
     // Function to write employee data to a file
     void writedata(ofstream &out) {
@@ -24,7 +24,7 @@ struct Employee {
         in.ignore();              // Ignore newline after ID
         getline(in, name);        // Read full name (can include spaces)
         getline(in, designation); // Read full designation
-        in >> salary;             // Read salary
+        in >> salary;           
     }
 };
 
@@ -39,7 +39,7 @@ void add() {
     Employee e;                             // Create an employee object
     cout << "Enter the Employee ID: ";
     cin >> e.Employee_ID;
-    cin.ignore();                           // Ignore newline character
+    cin.ignore();                          
     cout << "Enter the Employee Name: ";
     getline(cin, e.name);
     cout << "Enter the Employee Designation: ";
@@ -47,7 +47,7 @@ void add() {
     cout << "Enter the Employee Salary: ";
     cin >> e.salary;
 
-    e.writedata(out);                       // Write data to file
+    e.writedata(out);                       // Write data to file "employee.dat"
     out.close();                            // Close the file
     cout << "Employee data added successfully." << endl;
 }
